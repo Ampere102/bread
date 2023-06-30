@@ -324,66 +324,58 @@ local function CreateOptions(Frame)
             end;
         })
     end
-
     function Options.Button(Title, ButtonText, Callback)
         local Properties = {
-            Title = Title and tostring(Title) or "Button";
-            Function = Callback or function(Status) end;
+            Title = Title and tostring(Title) or "Button",
+            Function = Callback or function(Status) end,
         }
     
-        local Container = Utility.new("ImageButton", {
+        local Button = Utility.new("TextButton", {
             Name = "Button",
             Parent = typeof(Frame) == "Instance" and Frame or Frame(),
-            BackgroundTransparency = 1,
-            Size = UDim2.new(1, 0, 0, 25),
+            BackgroundColor3 = Color3.fromRGB(50, 55, 60),
+            Size = UDim2.new(0.2, 25, 0, 20),
+            Font = Enum.Font.Gotham,
+            Text = ButtonText or "Button",
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextSize = 12,
+            TextTransparency = 0.3,
+            [Roact.Event.MouseButton1Click] = function()
+                local Success, Error = pcall(Properties.Function, true) -- Assuming 'true' is the desired argument, adjust as needed
+                assert(FadeUI.Settings.Debug == false or Success, Error)
+            end,
         }, {
-            Utility.new("TextLabel", {
-                Name = "Title",
-                AnchorPoint = Vector2.new(0, 0.5),
-                BackgroundTransparency = 1,
-                Position = UDim2.new(0, 0, 0.5, 0),
-                Size = UDim2.new(0.5, 0, 1, 0),
-                Font = Enum.Font.Gotham,
-                Text = Title and tostring(Title) or "Button",
-                TextColor3 = Color3.fromRGB(255, 255, 255),
-                TextSize = 14,
-                TextTransparency = 0.3,
-                TextXAlignment = Enum.TextXAlignment.Left
-            }),
-            Utility.new("TextButton", {
-                Name = "Button",
-                AnchorPoint = Vector2.new(1, 0.5),
-                BackgroundColor3 = Color3.fromRGB(50, 55, 60),
-                Position = UDim2.new(1, 0, 0.5, 0),
-                Size = UDim2.new(0.2, 25, 0, 20),
-                Text = ButtonText or "Button",
-                Font = Enum.Font.Gotham,
-                TextColor3 = Color3.fromRGB(255, 255, 255),
-                TextSize = 12,
-                TextTransparency = 0.3
-            }, {
-                Utility.new("UICorner", {CornerRadius = UDim.new(0, 4)})
-            })
+            Utility.new("UICorner", {CornerRadius = UDim.new(0, 4)})
         })
     
-        Container.Button.MouseButton1Down:Connect(function()
-            local Success, Error = pcall(Properties.Function, true) -- Assuming 'true' is the desired argument, adjust as needed
-            assert(FadeUI.Settings.Debug == false or Success, Error)
-        end)
-    
-        return setmetatable({}, {
-            __index = function(Self, Index)
-                return Properties[Index]
-            end;
-            __newindex = function(Self, Index, Value)
-                if Index == "Title" then
-                    Container.Title.Text = Value and tostring(Value) or "Button"
-                elseif Index == "ButtonText" then
-                    Container.Button.Text = Value or "Button"
-                end
-                Properties[Index] = Value
-            end
+        local TitleLabel = Utility.new("TextLabel", {
+            Name = "Title",
+            Parent = Button,
+            AnchorPoint = Vector2.new(0, 0.5),
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 0, 0.5, 0),
+            Size = UDim2.new(0.5, 0, 1, 0),
+            Font = Enum.Font.Gotham,
+            Text = Title and tostring(Title) or "Button",
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextSize = 14,
+            TextTransparency = 0.3,
+            TextXAlignment = Enum.TextXAlignment.Left,
         })
+    
+        return {
+            Title = Title,
+            ButtonText = ButtonText,
+            Destroy = function()
+                Button:Destroy()
+            end,
+            UpdateTitle = function(NewTitle)
+                TitleLabel.Text = NewTitle and tostring(NewTitle) or "Button"
+            end,
+            UpdateButtonText = function(NewButtonText)
+                Button.Text = NewButtonText or "Button"
+            end,
+        }
     end
     
 
