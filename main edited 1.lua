@@ -341,8 +341,7 @@ local function CreateOptions(Frame)
             TextSize = 12,
             TextTransparency = 0.3,
             [Roact.Event.MouseButton1Click] = function()
-                local Success, Error = pcall(Properties.Function, true) -- Assuming 'true' is the desired argument, adjust as needed
-                assert(FadeUI.Settings.Debug == false or Success, Error)
+                Properties.Function(true) -- Assuming 'true' is the desired argument, adjust as needed
             end,
         }, {
             Utility.new("UICorner", {CornerRadius = UDim.new(0, 4)})
