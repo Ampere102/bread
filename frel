@@ -1,0 +1,58 @@
+-- Define the object name to search for
+    local objectNameToFind = "Fabbi_theDuck"
+    local partNameToFind = "Head"  -- Name of the part to teleport to
+
+    -- Reference to the player you want to teleport (you'll need to obtain this)
+    local player = game.Players.LocalPlayer -- This assumes you're teleporting the local player
+
+    -- Function to find an object by name in a specific parent object
+    local function findObjectByNameInParent(parent, name)
+        local object = parent:FindFirstChild(name)
+        if object then
+            return object
+        else
+            for _, child in pairs(parent:GetChildren()) do
+                object = findObjectByNameInParent(child, name)
+                if object then
+                    return object
+                end
+            end
+        end
+        return nil
+    end
+
+    -- Define the zones to search for "Fabbi_theDuck" and teleport the player
+    local zones = {
+        game:GetService("Workspace").WhiteZone,
+        game:GetService("Workspace").BlackZone,
+        game:GetService("Workspace")["Really redZone"],
+        game:GetService("Workspace").CamoZone,
+        game:GetService("Workspace")["Really blueZone"],
+        game:GetService("Workspace")["New YellerZone"],
+        game:GetService("Workspace").MagentaZone
+    }
+
+    local foundInZone = false
+
+    -- Search for "Fabbi_theDuck" in each zone
+    for _, zone in pairs(zones) do
+        local fabbiObject = findObjectByNameInParent(zone, objectNameToFind)
+
+        if fabbiObject then
+            -- Attempt to find the "LowerTorso" part in "Fabbi_theDuck"
+            local lowerTorsoPart = fabbiObject:FindFirstChild(partNameToFind)
+
+            if lowerTorsoPart then
+                -- Teleport the player to the "LowerTorso" part's position
+                local destinationPosition = lowerTorsoPart.Position
+                player.Character:SetPrimaryPartCFrame(CFrame.new(destinationPosition))
+                print("Fabbi go brr")
+                foundInZone = true
+                break -- Exit the loop once found
+            end
+        end
+    end
+
+    if not foundInZone then
+        print("Fabbi was not spotted. :sob:")
+    end
